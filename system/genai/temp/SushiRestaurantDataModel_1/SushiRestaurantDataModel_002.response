@@ -1,0 +1,286 @@
+{
+    "models": [
+        {
+            "classname": "Restaurant",
+            "code": "class Restaurant(Base):\\n    __tablename__ = 'restaurant'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String, nullable=False)\\n    address = Column(String)\\n    description = Column(Text)",
+            "sqlite_create": "CREATE TABLE restaurant (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, address TEXT, description TEXT)",
+            "description": "description: Details of sushi restaurants.",
+            "name": "Restaurant"
+        },
+        {
+            "classname": "Chef",
+            "code": "class Chef(Base):\\n    __tablename__ = 'chef'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String, nullable=False)\\n    specialty = Column(String)\\n    restaurant_id = Column(Integer, ForeignKey('restaurant.id'))",
+            "sqlite_create": "CREATE TABLE chef (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, specialty TEXT, restaurant_id INTEGER, FOREIGN KEY(restaurant_id) REFERENCES restaurant(id))",
+            "description": "description: Details of chefs working at the sushi restaurant.",
+            "name": "Chef"
+        },
+        {
+            "classname": "Menu",
+            "code": "class Menu(Base):\\n    __tablename__ = 'menu'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String, nullable=False)\\n    description = Column(Text)\\n    restaurant_id = Column(Integer, ForeignKey('restaurant.id'))",
+            "sqlite_create": "CREATE TABLE menu (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, restaurant_id INTEGER, FOREIGN KEY(restaurant_id) REFERENCES restaurant(id))",
+            "description": "description: Menu items offered at the restaurant.",
+            "name": "Menu"
+        },
+        {
+            "classname": "Ingredient",
+            "code": "class Ingredient(Base):\\n    __tablename__ = 'ingredient'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String, nullable=False)\\n    description = Column(String)",
+            "sqlite_create": "CREATE TABLE ingredient (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT)",
+            "description": "description: Ingredients used in sushi dishes.",
+            "name": "Ingredient"
+        },
+        {
+            "classname": "Dish",
+            "code": "class Dish(Base):\\n    __tablename__ = 'dish'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String, nullable=False)\\n    price = Column(Integer, nullable=False)\\n    menu_id = Column(Integer, ForeignKey('menu.id'))\\n    description = Column(Text)",
+            "sqlite_create": "CREATE TABLE dish (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, price INTEGER NOT NULL, menu_id INTEGER, description TEXT, FOREIGN KEY(menu_id) REFERENCES menu(id))",
+            "description": "description: Sushi dishes offered on a menu.",
+            "name": "Dish"
+        },
+        {
+            "classname": "MenuItem",
+            "code": "class MenuItem(Base):\\n    __tablename__ = 'menu_item'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    dish_id = Column(Integer, ForeignKey('dish.id'))\\n    menu_id = Column(Integer, ForeignKey('menu.id'))",
+            "sqlite_create": "CREATE TABLE menu_item (id INTEGER PRIMARY KEY AUTOINCREMENT, dish_id INTEGER, menu_id INTEGER, FOREIGN KEY(dish_id) REFERENCES dish(id), FOREIGN KEY(menu_id) REFERENCES menu(id))",
+            "description": "description: Intersection table for dishes and menus.",
+            "name": "MenuItem"
+        },
+        {
+            "classname": "Supplier",
+            "code": "class Supplier(Base):\\n    __tablename__ = 'supplier'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String, nullable=False)\\n    contact_info = Column(String)",
+            "sqlite_create": "CREATE TABLE supplier (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, contact_info TEXT)",
+            "description": "description: Suppliers providing ingredients to the restaurant.",
+            "name": "Supplier"
+        },
+        {
+            "classname": "Supply",
+            "code": "class Supply(Base):\\n    __tablename__ = 'supply'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    ingredient_id = Column(Integer, ForeignKey('ingredient.id'))\\n    supplier_id = Column(Integer, ForeignKey('supplier.id'))\\n    quantity = Column(Integer)",
+            "sqlite_create": "CREATE TABLE supply (id INTEGER PRIMARY KEY AUTOINCREMENT, ingredient_id INTEGER, supplier_id INTEGER, quantity INTEGER, FOREIGN KEY(ingredient_id) REFERENCES ingredient(id), FOREIGN KEY(supplier_id) REFERENCES supplier(id))",
+            "description": "description: Intersection table for ingredients and suppliers.",
+            "name": "Supply"
+        },
+        {
+            "classname": "Reservation",
+            "code": "class Reservation(Base):\\n    __tablename__ = 'reservation'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    customer_name = Column(String, nullable=False)\\n    date_time = Column(DateTime)\\n    guests = Column(Integer, nullable=False)\\n    restaurant_id = Column(Integer, ForeignKey('restaurant.id'))",
+            "sqlite_create": "CREATE TABLE reservation (id INTEGER PRIMARY KEY AUTOINCREMENT, customer_name TEXT NOT NULL, date_time DATETIME, guests INTEGER NOT NULL, restaurant_id INTEGER, FOREIGN KEY(restaurant_id) REFERENCES restaurant(id))",
+            "description": "description: Reservations made at a restaurant.",
+            "name": "Reservation"
+        },
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\\n    __tablename__ = 'customer'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String, nullable=False)\\n    phone = Column(String)\\n    email = Column(String)",
+            "sqlite_create": "CREATE TABLE customer (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, phone TEXT, email TEXT)",
+            "description": "description: Customers dining at or reserving at the restaurant.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Feedback",
+            "code": "class Feedback(Base):\\n    __tablename__ = 'feedback'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    customer_id = Column(Integer, ForeignKey('customer.id'))\\n    comments = Column(Text)\\n    rating = Column(Integer, nullable=True)",
+            "sqlite_create": "CREATE TABLE feedback (id INTEGER PRIMARY KEY AUTOINCREMENT, customer_id INTEGER, comments TEXT, rating INTEGER, FOREIGN KEY(customer_id) REFERENCES customer(id))",
+            "description": "description: Customer feedback from dining experience.",
+            "name": "Feedback"
+        },
+        {
+            "classname": "Review",
+            "code": "class Review(Base):\\n    __tablename__ = 'review'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    chef_id = Column(Integer, ForeignKey('chef.id'))\\n    review_comments = Column(Text)\\n    date_time = Column(DateTime)",
+            "sqlite_create": "CREATE TABLE review (id INTEGER PRIMARY KEY AUTOINCREMENT, chef_id INTEGER, review_comments TEXT, date_time DATETIME, FOREIGN KEY(chef_id) REFERENCES chef(id))",
+            "description": "description: Reviews about chefs' performances.",
+            "name": "Review"
+        }
+    ],
+    "rules": [],
+    "test_data": "# Creating instances of test data for each table:\\n",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "restaurant1",
+            "code": "restaurant1 = Restaurant(name=\\"
+        },
+        {
+            "test_data_row_variable": "restaurant2",
+            "code": "restaurant2 = Restaurant(name=\\\"Sushi Zen\\\", address=\\\"654 Elm St\\\", description=\\\"A fusion of tradition and modern sushi techniques.\\\")"
+        },
+        {
+            "test_data_row_variable": "restaurant3",
+            "code": "restaurant3 = Restaurant(name=\\\"Omakase Heaven\\\", address=\\\"789 Pine St\\\", description=\\\"Dedicated to Omakase style sushi dining.\\\")"
+        },
+        {
+            "test_data_row_variable": "restaurant4",
+            "code": "restaurant4 = Restaurant(name=\\\"Tokyo Sushi House\\\", address=\\\"321 Oak St\\\", description=\\\"Authentic Tokyo-style sushi experience.\\\")"
+        },
+        {
+            "test_data_row_variable": "chef1",
+            "code": "chef1 = Chef(name=\\\"Hiro Tanaka\\\", specialty=\\\"Sashimi\\\", restaurant_id=1)"
+        },
+        {
+            "test_data_row_variable": "chef2",
+            "code": "chef2 = Chef(name=\\\"Masako Yoshi\\\", specialty=\\\"Nigiri\\\", restaurant_id=2)"
+        },
+        {
+            "test_data_row_variable": "chef3",
+            "code": "chef3 = Chef(name=\\\"Ken Ichiro\\\", specialty=\\\"Maki\\\", restaurant_id=3)"
+        },
+        {
+            "test_data_row_variable": "chef4",
+            "code": "chef4 = Chef(name=\\\"Akira Suzuki\\\", specialty=\\\"Tempura\\\", restaurant_id=4)"
+        },
+        {
+            "test_data_row_variable": "menu1",
+            "code": "menu1 = Menu(name=\\\"Lunch Special\\\", description=\\\"Affordable sushi lunch items\\\", restaurant_id=1)"
+        },
+        {
+            "test_data_row_variable": "menu2",
+            "code": "menu2 = Menu(name=\\\"Dinner Feast\\\", description=\\\"Sumptuous dinner sashimi selections\\\", restaurant_id=2)"
+        },
+        {
+            "test_data_row_variable": "menu3",
+            "code": "menu3 = Menu(name=\\\"Weekend Brunch\\\", description=\\\"Weekend special brunch menu\\\", restaurant_id=3)"
+        },
+        {
+            "test_data_row_variable": "menu4",
+            "code": "menu4 = Menu(name=\\\"Omakase Collection\\\", description=\\\"Chef's finest Omakase\\\", restaurant_id=4)"
+        },
+        {
+            "test_data_row_variable": "ingredient1",
+            "code": "ingredient1 = Ingredient(name=\\\"Salmon\\\", description=\\\"Freshly sourced Atlantic salmon.\\\")"
+        },
+        {
+            "test_data_row_variable": "ingredient2",
+            "code": "ingredient2 = Ingredient(name=\\\"Tuna\\\", description=\\\"Deep-sea wild tuna.\\\")"
+        },
+        {
+            "test_data_row_variable": "ingredient3",
+            "code": "ingredient3 = Ingredient(name=\\\"Eel\\\", description=\\\"Grilled eel with a sweet sauce.\\\")"
+        },
+        {
+            "test_data_row_variable": "ingredient4",
+            "code": "ingredient4 = Ingredient(name=\\\"Rice\\\", description=\\\"Premium sushi rice.\\\")"
+        },
+        {
+            "test_data_row_variable": "dish1",
+            "code": "dish1 = Dish(name=\\\"Spicy Tuna Roll\\\", price=10, menu_id=1, description=\\\"Spicy tuna wrapped with fresh avocado and rice.\\\")"
+        },
+        {
+            "test_data_row_variable": "dish2",
+            "code": "dish2 = Dish(name=\\\"Salmon Sashimi\\\", price=15, menu_id=2, description=\\\"Exquisitely sliced salmon sashimi.\\\")"
+        },
+        {
+            "test_data_row_variable": "dish3",
+            "code": "dish3 = Dish(name=\\\"Eel Nigiri\\\", price=8, menu_id=3, description=\\\"Freshwater eel atop vinegared rice.\\\")"
+        },
+        {
+            "test_data_row_variable": "dish4",
+            "code": "dish4 = Dish(name=\\\"Omakase Special\\\", price=30, menu_id=4, description=\\\"Chef's choice special dish.\\\")"
+        },
+        {
+            "test_data_row_variable": "menuItem1",
+            "code": "menuItem1 = MenuItem(dish_id=1, menu_id=1)"
+        },
+        {
+            "test_data_row_variable": "menuItem2",
+            "code": "menuItem2 = MenuItem(dish_id=2, menu_id=2)"
+        },
+        {
+            "test_data_row_variable": "menuItem3",
+            "code": "menuItem3 = MenuItem(dish_id=3, menu_id=3)"
+        },
+        {
+            "test_data_row_variable": "menuItem4",
+            "code": "menuItem4 = MenuItem(dish_id=4, menu_id=4)"
+        },
+        {
+            "test_data_row_variable": "supplier1",
+            "code": "supplier1 = Supplier(name=\\\"Atlantic Seafood Co.\\\", contact_info=\\\"atlantic@seafood.com\\\")"
+        },
+        {
+            "test_data_row_variable": "supplier2",
+            "code": "supplier2 = Supplier(name=\\\"Ocean's Harvest\\\", contact_info=\\\"harvest@seafoodsupply.com\\\")"
+        },
+        {
+            "test_data_row_variable": "supplier3",
+            "code": "supplier3 = Supplier(name=\\\"Rice Masters\\\", contact_info=\\\"info@ricemasters.com\\\")"
+        },
+        {
+            "test_data_row_variable": "supplier4",
+            "code": "supplier4 = Supplier(name=\\\"Eel Emporium\\\", contact_info=\\\"sales@eelemporium.com\\\")"
+        },
+        {
+            "test_data_row_variable": "supply1",
+            "code": "supply1 = Supply(ingredient_id=1, supplier_id=1, quantity=50)"
+        },
+        {
+            "test_data_row_variable": "supply2",
+            "code": "supply2 = Supply(ingredient_id=2, supplier_id=2, quantity=30)"
+        },
+        {
+            "test_data_row_variable": "supply3",
+            "code": "supply3 = Supply(ingredient_id=3, supplier_id=4, quantity=20)"
+        },
+        {
+            "test_data_row_variable": "supply4",
+            "code": "supply4 = Supply(ingredient_id=4, supplier_id=3, quantity=200)"
+        },
+        {
+            "test_data_row_variable": "reservation1",
+            "code": "reservation1 = Reservation(customer_name=\\\"John Doe\\\", date_time=date(2023, 12, 24), guests=4, restaurant_id=1)"
+        },
+        {
+            "test_data_row_variable": "reservation2",
+            "code": "reservation2 = Reservation(customer_name=\\\"Jane Smith\\\", date_time=date(2023, 12, 25), guests=2, restaurant_id=2)"
+        },
+        {
+            "test_data_row_variable": "reservation3",
+            "code": "reservation3 = Reservation(customer_name=\\\"Mike Johnson\\\", date_time=date(2023, 12, 26), guests=3, restaurant_id=3)"
+        },
+        {
+            "test_data_row_variable": "reservation4",
+            "code": "reservation4 = Reservation(customer_name=\\\"Emily Davis\\\", date_time=date(2023, 12, 27), guests=5, restaurant_id=4)"
+        },
+        {
+            "test_data_row_variable": "customer1",
+            "code": "customer1 = Customer(name=\\\"Alice\\\", phone=\\\"123-456-7890\\\", email=\\\"alice@example.com\\\")"
+        },
+        {
+            "test_data_row_variable": "customer2",
+            "code": "customer2 = Customer(name=\\\"Bob\\\", phone=\\\"234-567-8901\\\", email=\\\"bob@example.com\\\")"
+        },
+        {
+            "test_data_row_variable": "customer3",
+            "code": "customer3 = Customer(name=\\\"Charlie\\\", phone=\\\"345-678-9012\\\", email=\\\"charlie@example.com\\\")"
+        },
+        {
+            "test_data_row_variable": "customer4",
+            "code": "customer4 = Customer(name=\\\"David\\\", phone=\\\"456-789-0123\\\", email=\\\"david@example.com\\\")"
+        },
+        {
+            "test_data_row_variable": "feedback1",
+            "code": "feedback1 = Feedback(customer_id=1, comments=\\\"Excellent sushi and great service!\\\", rating=5)"
+        },
+        {
+            "test_data_row_variable": "feedback2",
+            "code": "feedback2 = Feedback(customer_id=2, comments=\\\"Good experience, will come again.\\\", rating=4)"
+        },
+        {
+            "test_data_row_variable": "feedback3",
+            "code": "feedback3 = Feedback(customer_id=3, comments=\\\"Average, worth a visit.\\\", rating=3)"
+        },
+        {
+            "test_data_row_variable": "feedback4",
+            "code": "feedback4 = Feedback(customer_id=4, comments=\\\"Not upto the standards expected.\\\", rating=2)"
+        },
+        {
+            "test_data_row_variable": "review1",
+            "code": "review1 = Review(chef_id=1, review_comments=\\\"Amazing artist, great presentation.\\\", date_time=date(2023, 10, 5))"
+        },
+        {
+            "test_data_row_variable": "review2",
+            "code": "review2 = Review(chef_id=2, review_comments=\\\"Skilled in cutting techniques.\\\", date_time=date(2023, 10, 10))"
+        },
+        {
+            "test_data_row_variable": "review3",
+            "code": "review3 = Review(chef_id=3, review_comments=\\\"Innovative and delicious.\\\", date_time=date(2023, 10, 15))"
+        },
+        {
+            "test_data_row_variable": "review4",
+            "code": "review4 = Review(chef_id=4, review_comments=\\\"Needs improvement in time management.\\\", date_time=date(2023, 10, 20))"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO restaurant (name, address, description) VALUES (\"Sushi Delight\", \"123 Main St\", \"Premium Sushi Dining Experience.\");\\nINSERT INTO restaurant (name, address, description) VALUES (\"Sushi Zen\", \"654 Elm St\", \"A fusion of tradition and modern sushi techniques.\");\\nINSERT INTO restaurant (name, address, description) VALUES (\"Omakase Heaven\", \"789 Pine St\", \"Dedicated to Omakase style sushi dining.\");\\nINSERT INTO restaurant (name, address, description) VALUES (\"Tokyo Sushi House\", \"321 Oak St\", \"Authentic Tokyo-style sushi experience.\");\\n\\nINSERT INTO chef (name, specialty, restaurant_id) VALUES (\"Hiro Tanaka\", \"Sashimi\", 1);\\nINSERT INTO chef (name, specialty, restaurant_id) VALUES (\"Masako Yoshi\", \"Nigiri\", 2);\\nINSERT INTO chef (name, specialty, restaurant_id) VALUES (\"Ken Ichiro\", \"Maki\", 3);\\nINSERT INTO chef (name, specialty, restaurant_id) VALUES (\"Akira Suzuki\", \"Tempura\", 4);\\n\\n...",
+    "name": "SushiRestaurantDataModel"
+}

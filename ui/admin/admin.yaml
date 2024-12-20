@@ -1,0 +1,374 @@
+about:
+  date: December 20, 2024 15:18:06
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 13
+  number_tables: 12
+info_toggle_checked: true
+resources:
+  Customer:
+    attributes:
+    - label: ' first_name*'
+      name: first_name
+      search: true
+      sort: true
+    - name: last_name
+    - name: email
+    - name: phone_number
+    - name: address
+    - name: id
+    description: Represents customers of the sushi restaurant.
+    info_list: Represents customers of the sushi restaurant.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customer_id
+      name: OrderList
+      resource: Order
+    - direction: tomany
+      fks:
+      - customer_id
+      name: RatingList
+      resource: Rating
+    - direction: tomany
+      fks:
+      - customer_id
+      name: ReservationList
+      resource: Reservation
+    type: Customer
+    user_key: first_name
+  Ingredient:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: supplier_id
+    - name: description
+    - name: price_per_unit
+      type: DECIMAL
+    - name: id
+    description: Represents ingredients used in sushi dishes.
+    info_list: Represents ingredients used in sushi dishes.
+    tab_groups:
+    - direction: toone
+      fks:
+      - supplier_id
+      name: supplier
+      resource: Supplier
+    type: Ingredient
+    user_key: name
+  Menu:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: restaurant_id
+    - name: description
+    - name: available
+      type: Boolean
+    - name: created_date
+      type: DATE
+    - name: id
+    description: Represents the menu of a sushi restaurant.
+    info_list: Represents the menu of a sushi restaurant.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - menu_id
+      name: MenuItemList
+      resource: MenuItem
+    - direction: toone
+      fks:
+      - restaurant_id
+      name: restaurant
+      resource: Restaurant
+    type: Menu
+    user_key: name
+  MenuItem:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: menu_id
+    - name: description
+    - name: price
+      type: DECIMAL
+    - name: is_vegan
+      type: Boolean
+    - name: is_gluten_free
+      type: Boolean
+    - name: id
+    description: Represents individual items in a menu.
+    info_list: Represents individual items in a menu.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - menu_item_id
+      name: OrderItemList
+      resource: OrderItem
+    - direction: toone
+      fks:
+      - menu_id
+      name: menu
+      resource: Menu
+    type: MenuItem
+    user_key: name
+  Order:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: customer_id
+    - name: restaurant_id
+    - name: order_date
+      type: DATETIME
+    - name: total_amount
+      type: DECIMAL
+    description: Represents customer orders at the restaurant.
+    info_list: Represents customer orders at the restaurant.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - order_id
+      name: OrderItemList
+      resource: OrderItem
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    - direction: toone
+      fks:
+      - restaurant_id
+      name: restaurant
+      resource: Restaurant
+    type: Order
+    user_key: id
+  OrderItem:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: menu_item_id
+    - name: order_id
+    - name: quantity
+    - name: subtotal
+      type: DECIMAL
+    description: Represents ordered items in a customer's order.
+    info_list: Represents ordered items in a customer's order.
+    tab_groups:
+    - direction: toone
+      fks:
+      - menu_item_id
+      name: menu_item
+      resource: MenuItem
+    - direction: toone
+      fks:
+      - order_id
+      name: order
+      resource: Order
+    type: OrderItem
+    user_key: id
+  Rating:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: customer_id
+    - name: restaurant_id
+    - name: rating
+    - name: comment
+    description: Represents the ratings given by customers for a sushi restaurant.
+    info_list: Represents the ratings given by customers for a sushi restaurant.
+    tab_groups:
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    - direction: toone
+      fks:
+      - restaurant_id
+      name: restaurant
+      resource: Restaurant
+    type: Rating
+    user_key: id
+  Reservation:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: customer_id
+    - name: restaurant_id
+    - name: reservation_date
+      type: DATETIME
+    - name: number_of_guests
+    description: Represents table reservations made by customers.
+    info_list: Represents table reservations made by customers.
+    tab_groups:
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    - direction: toone
+      fks:
+      - restaurant_id
+      name: restaurant
+      resource: Restaurant
+    type: Reservation
+    user_key: id
+  Restaurant:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: address
+    - name: phone_number
+    - name: email
+    - name: established_date
+      type: DATE
+    - name: is_chain
+      type: Boolean
+    - name: id
+    description: Represents a sushi restaurant with basic information.
+    info_list: Represents a sushi restaurant with basic information.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - restaurant_id
+      name: MenuList
+      resource: Menu
+    - direction: tomany
+      fks:
+      - restaurant_id
+      name: OrderList
+      resource: Order
+    - direction: tomany
+      fks:
+      - restaurant_id
+      name: RatingList
+      resource: Rating
+    - direction: tomany
+      fks:
+      - restaurant_id
+      name: ReservationList
+      resource: Reservation
+    - direction: tomany
+      fks:
+      - restaurant_id
+      name: StaffList
+      resource: Staff
+    type: Restaurant
+    user_key: name
+  Shift:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: staff_id
+    - name: start_time
+      type: DATETIME
+    - name: end_time
+      type: DATETIME
+    description: Represents shifts assigned to staff at the restaurant.
+    info_list: Represents shifts assigned to staff at the restaurant.
+    tab_groups:
+    - direction: toone
+      fks:
+      - staff_id
+      name: staff
+      resource: Staff
+    type: Shift
+    user_key: id
+  Staff:
+    attributes:
+    - label: ' first_name*'
+      name: first_name
+      search: true
+      sort: true
+    - name: restaurant_id
+    - name: last_name
+    - name: job_title
+    - name: hire_date
+      type: DATE
+    - name: salary
+      type: DECIMAL
+    - name: id
+    description: Represents the staff working at the sushi restaurant.
+    info_list: Represents the staff working at the sushi restaurant.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - staff_id
+      name: ShiftList
+      resource: Shift
+    - direction: toone
+      fks:
+      - restaurant_id
+      name: restaurant
+      resource: Restaurant
+    type: Staff
+    user_key: first_name
+  Supplier:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: address
+    - name: contact_number
+    - name: id
+    description: Represents a supplier for sushi ingredients.
+    info_list: Represents a supplier for sushi ingredients.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - supplier_id
+      name: IngredientList
+      resource: Ingredient
+    type: Supplier
+    user_key: name
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '0'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: OntimizeEE
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'
